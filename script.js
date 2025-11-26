@@ -155,6 +155,27 @@ $startBtn.on('click', function () {
     $loadingScreen.css('animation-play-state', 'running');
 
 
+
+                    const lines = $("#startTitle p");
+
+            // p1 → fade up
+            $(lines[0]).css({
+                transform: "translateY(-120px)",
+                opacity: 0
+            });
+
+            // p2 → fade left
+            $(lines[1]).css({
+                transform: "translateX(-120px)",
+                opacity: 0
+            });
+
+            // p3 → fade right
+            $(lines[2]).css({
+                transform: "translateX(120px)",
+                opacity: 0
+            });
+
         // Animate loading fill
         $loadingFill.css('transition', `width ${loadingDuration / 1000}s linear`).css('width', '100%');
         $('#fallingImg').css('animation-play-state', 'running');
