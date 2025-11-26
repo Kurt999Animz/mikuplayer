@@ -136,56 +136,81 @@
 
     <script src="script.js"></script>
     <script>
-        // loading screen
-        $(document).ready(function () {
-            const $loadingScreen = $('<div>', { id: 'loadingScreen' }).css({
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: 'black',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 9999
-            });
+$(document).ready(function () {
+    const $loadingScreen = $('<div>', { id: 'loadingScreen' }).css({
+        position: 'fixed',
+        top: 0, left: 0, width: '100%', height: '100%',
+        background: 'black', display: 'flex',
+        justifyContent: 'center', alignItems: 'center',
+        zIndex: 9999
+    });
 
-            // spinner
-            const $loader = $('<div>').css({
-                border: '8px solid rgba(255, 255, 255, 0.2)',
-                borderTop: '8px solid #0cc', // cyan/teal
-                borderRadius: '50%',
-                width: '80px',
-                height: '80px',
-                animation: 'spin 1s linear infinite'
-            });
+    const $loader = $('<div>').css({
+        border: '8px solid rgba(255, 255, 255, 0.2)',
+        borderTop: '8px solid #0cc',
+        borderRadius: '50%',
+        width: '80px', height: '80px',
+        animation: 'spin 1s linear infinite'
+    });
 
-            $loadingScreen.append($loader);
-            $('body').append($loadingScreen);
+    $loadingScreen.append($loader);
+    $('body').append($loadingScreen);
+    $('body').css('overflow', 'hidden');
 
-            $('body').css('overflow', 'hidden');
+    $('head').append('<style>@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}</style>');
 
-            const $style = $('<style>').html(`
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+    // LIST ALL FILES YOU WANT TO PRELOAD
+    const assets = [
+        'assets/miku-hatsune.gif',
+        'assets/fall.png',
+        'assets/meeguh.gif',
+        'assets/cd.png',
+        'migu/001.png',
+        // add all song audio files
+        'songs/Be With Master.mp3',
+        'songs/Yogurt Stained on the Floor.mp3',
+        'songs/Look This Way, Baby.flac',
+        'songs/Love Song.flac',
+        'songs/Love Trial.flac',
+        'songs/Buoyant Colors.flac',
+        'songs/popipo.ogg',
+        'songs/Hello How are You.mp3',
+        'songs/Cat Food.mp3',
+        'songs/The Intense Voice Of Hatsune Miku.mp3',
+        'songs/magicalcureloveshot.mp3'
+    ];
+
+    let loadedCount = 0;
+
+    function assetLoaded() {
+        loadedCount++;
+        if (loadedCount === assets.length) {
+            // All assets loaded
+            $loadingScreen.css('transition', 'opacity 0.5s').css('opacity', '0');
+            setTimeout(() => {
+                $loadingScreen.remove();
+                $('body').css('overflow', '');
+            }, 500);
         }
-    `);
-            $('head').append($style);
+    }
 
+    assets.forEach(src => {
+        const ext = src.split('.').pop().toLowerCase();
+        if (ext === 'mp3' || ext === 'flac' || ext === 'ogg') {
+            const audio = new Audio();
+            audio.src = src;
+            audio.onloadeddata = assetLoaded;
+            audio.onerror = assetLoaded; // in case file fails to load
+        } else {
+            const img = new Image();
+            img.src = src;
+            img.onload = assetLoaded;
+            img.onerror = assetLoaded;
+        }
+    });
+});
+</script>
 
-            $(window).on('load', function () {
-                $loadingScreen.css('transition', 'opacity 0.5s ease').css('opacity', '0');
-                setTimeout(function () {
-                    $loadingScreen.remove();
-                    $('body').css('overflow', '');
-                }, 500);
-            });
-        });
-
-
-    </script>
 </body>
 
 </html>
