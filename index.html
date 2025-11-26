@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Miku Player</title>
+    <link rel="icon" type="image/gif" href="assets/miku-hatsune.gif">
+    <script src="jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="container">
+
+        <header>Miku Player</header>
+
+        <div id="bg-shape-container">
+            <div class="background-shapes">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div id="startMenu">
+            <button id="startBtn">START</button>
+        </div>
+
+        <div id="loadingScreen">
+            <div class="loading-text">Miku Player Loading</div>
+            <div class="loading-bar">
+                <div id="loadingFill" class="loading-fill"></div>
+            </div>
+        </div>
+
+        <img id="fallingImg" src="assets/fall.png">
+
+        <div id="beatGradient"></div>
+
+        <img id="migu" src="migu/001.png" alt="Miku">
+
+        <div id="songPanel">
+            <div id="songList">
+                <div class="songItem" data-file="songs/Be With Master.mp3" data-bpm="180" data-artist="LamazeP">
+                    <span>1. Be With Master</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+                <div class="songItem" data-file="songs/Yogurt Stained on the Floor.mp3" data-bpm="170"
+                    data-artist="LamazeP">
+                    <span>2. Yogurt Stained On The Floor</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+                <div class="songItem" data-file="songs/Look This Way, Baby.flac" data-bpm="186"
+                    data-artist="ryo (supercell)">
+                    <span>3. Look This Way, Baby</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+                <div class="songItem" data-file="songs/Love Song.flac" data-bpm="180" data-artist="LamazeP">
+                    <span>4. Love Song</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+                <div class="songItem" data-file="songs/Love Trial.flac" data-bpm="134" data-artist="40mp">
+                    <span>5. Love Trial</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+
+                </div>
+
+                <div class="songItem" data-file="songs/Buoyant Colors.flac" data-bpm="140" data-artist="Kikuo">
+                    <span>6. Buoyant Colors</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+                <div class="songItem" data-file="songs/popipo.ogg" data-bpm="150" data-artist="LamazeP">
+                    <span>7. Vegetable Juice (Popipo)</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+                <div class="songItem" data-file="songs/Hello How are You.mp3" data-bpm="95" data-artist="Hoehoe-P">
+                    <span>8. Hello, How are you</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+                <div class="songItem" data-file="songs/Cat Food.mp3" data-bpm="174" data-artist="doriko">
+                    <span>9. Cat Food</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+                <div class="songItem" data-file="songs/The Intense Voice Of Hatsune Miku.mp3" data-bpm="200"
+                    data-artist="cosMo@BousouP">
+                    <span>10. The Intense Voice of Hatsune Miku</span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+                <div class="songItem" data-file="songs/magicalcureloveshot.mp3" data-bpm="192" data-artist="SAWTOWNE">
+                    <span>11. M@GICAL CURE! LOVE SHOT! </span>
+                    <img src="assets/meeguh.gif" class="playing-icon" alt="playing">
+                </div>
+
+            </div>
+        </div>
+
+        <footer>
+            <div class="album-art-container">
+                <img id="rotatingArt" src="assets/cd.png">
+            </div>
+
+            <div class="controls-area">
+                <button id="playPauseBtn" class="btn-control">
+                    <svg id="icon-pause" viewBox="0 0 24 24">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                    <svg id="icon-play" viewBox="0 0 24 24" style="display:none">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </button>
+
+                <div class="song-info">
+                    <span id="displayTitle" class="song-title">Select a Song</span>
+                    <span id="displayArtist" class="song-artist">--</span>
+                </div>
+            </div>
+
+            <div class="volume-container">
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+            </div>
+        </footer>
+
+        <audio id="song"></audio>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // loading screen
+        $(document).ready(function () {
+            const $loadingScreen = $('<div>', { id: 'loadingScreen' }).css({
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'black',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 9999
+            });
+
+            // spinner
+            const $loader = $('<div>').css({
+                border: '8px solid rgba(255, 255, 255, 0.2)',
+                borderTop: '8px solid #0cc', // cyan/teal
+                borderRadius: '50%',
+                width: '80px',
+                height: '80px',
+                animation: 'spin 1s linear infinite'
+            });
+
+            $loadingScreen.append($loader);
+            $('body').append($loadingScreen);
+
+            $('body').css('overflow', 'hidden');
+
+            const $style = $('<style>').html(`
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `);
+            $('head').append($style);
+
+
+            $(window).on('load', function () {
+                $loadingScreen.css('transition', 'opacity 0.5s ease').css('opacity', '0');
+                setTimeout(function () {
+                    $loadingScreen.remove();
+                    $('body').css('overflow', '');
+                }, 500);
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>
