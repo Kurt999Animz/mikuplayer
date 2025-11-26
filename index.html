@@ -221,6 +221,46 @@
                 opacity: 0
             });
         });
+// Immediately create loader on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+    // Create loader element
+    const loader = document.createElement("div");
+    loader.id = "initialLoader";
+    loader.textContent = "Loading Miku Player…";
+
+    // Apply styles purely via JS
+    Object.assign(loader.style, {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#000",
+        color: "#0cc",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontFamily: "Arial, sans-serif",
+        fontSize: "28px",
+        zIndex: "999999",
+        opacity: "1",
+        transition: "opacity 0.6s ease",
+        pointerEvents: "none",
+    });
+
+    document.body.appendChild(loader);
+
+    // Wait for everything to load
+    window.addEventListener("load", () => {
+        // Fade out
+        loader.style.opacity = "0";
+
+        // Remove from DOM after transition
+        setTimeout(() => {
+            loader.remove();
+        }, 600);
+    });
+});
 
     </script>
 </body>
