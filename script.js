@@ -64,6 +64,13 @@ function playSongAtIndex(index) {
     frameIndex = 0;
     $migu.attr('src', frames[0]);
 
+    // Stop any ongoing beat/frame animations immediately (like pause)
+    stopTimers();
+    isPlaying = false;
+    updatePlayIcon();
+    $bgContainer.css('opacity', '0.2');
+    $beatGradient.css({ 'opacity': 0, 'bottom': '-300px' });
+
     $songItems.removeClass('active');
     $item.addClass('active');
     $item[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -91,23 +98,21 @@ function playSongAtIndex(index) {
     });
 }
 
+
 // ====== START BUTTON ======
 $startBtn.on('click', function () {
-    $(this).addClass("btn-exit");
-    $startMenu.css('pointer-events', 'none');
-
     const firstSong = $songItems.eq(0);
     const audioEl = $song[0];
     audioEl.src = firstSong.data('file');
     audioEl.currentTime = 0;
 
-    // Show loading screen immediately
-    $loadingScreen.css('opacity', 1);
-    $loadingFill.css({ width: '0%', transition: 'none' });
-
     // Wait for audio to load fully
     audioEl.addEventListener('canplay', function onCanPlay() {
         audioEl.removeEventListener('canplay', onCanPlay);
+        $(this).addClass("btn-exit");
+        $startMenu.css('pointer-events', 'none');
+        $loadingScreen.css('opacity', 1);
+        $loadingFill.css({ width: '0%', transition: 'none' });
 
         // Animate loading fill
         $loadingFill.css('transition', `width ${loadingDuration / 1000}s linear`).css('width', '100%');
