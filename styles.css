@@ -190,7 +190,7 @@ background: linear-gradient(90deg, var(--miku-light), var(--miku-primary));
         transform: translateX(100%) rotate(0deg);
     }
     100% {
-        top: 100vh;
+        top: 800px;
         opacity: 0;
         transform: translateX(-200%) rotate(-767deg); /* SIXXXSEVEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN*/
     }
