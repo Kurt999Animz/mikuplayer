@@ -5,8 +5,34 @@
     <meta charset="UTF-8">
     <title>Miku Player</title>
     <link rel="icon" type="image/gif" href="assets/miku-hatsune.gif">
+    <!-- ACTIVITY #1 -->
     <script src="jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        #startTitle {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        #startTitle p {
+            margin: 5px 0;
+            padding: 0;
+            color: var(--miku-text-dim);
+            font-size: 20px;
+            transition: 0.6s ease;
+        }
+
+        #title p {
+            font-size: 48px;
+            color: var(--miku-light);
+            text-shadow: 0 0 10px var(--miku-primary);
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 
 <body>
@@ -28,6 +54,22 @@
         </div>
 
         <div id="startMenu">
+            <div id="startTitle">
+
+                <!-- ACTIVITY  #2 -->
+
+                <div id="title"> <!--yung #samplediv1 -->
+                    <p>Miku Player</p>
+                </div>
+
+                <div>
+                    <p>a simple player that features a</p>
+                </div>
+                <div>
+                    <p>chibi miku dancin to the music</p>
+                </div>
+            </div>
+
             <button id="startBtn">START</button>
         </div>
 
@@ -136,81 +178,51 @@
 
     <script src="script.js"></script>
     <script>
-$(document).ready(function () {
-    const $loadingScreen = $('<div>', { id: 'loadingScreen' }).css({
-        position: 'fixed',
-        top: 0, left: 0, width: '100%', height: '100%',
-        background: 'black', display: 'flex',
-        justifyContent: 'center', alignItems: 'center',
-        zIndex: 9999
-    });
+        $(document).ready(function () {
+            //ACTIVITY  #3
+            $("#title").css({ //ung samplediv1
+                "margin-bottom": "20px"
+            });
+            $("#title p").css({  //sir ginawa ko nalang na i edit ung mga <p> na nakalagay sa loob ng #title para hindi  masira ung ibang <p> element, naooverride ng js ung css na iba e
+                "letter-spacing": "3px",
+                "font-size": "54px",
+                "font-weight": "bold",
+                "color": "var(--miku-light)",
+                "transform": "scale(1.05)",
+                "transition": "0.3s ease"
+            });
+            $("#startTitle p").not("#title p").css({//ung mga <p> na di kasama sa #title
+                "opacity": "0.8"
+            });
 
-    const $loader = $('<div>').css({
-        border: '8px solid rgba(255, 255, 255, 0.2)',
-        borderTop: '8px solid #0cc',
-        borderRadius: '50%',
-        width: '80px', height: '80px',
-        animation: 'spin 1s linear infinite'
-    });
+        });
 
-    $loadingScreen.append($loader);
-    $('body').append($loadingScreen);
-    $('body').css('overflow', 'hidden');
 
-    $('head').append('<style>@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}</style>');
+        //extra
+        $("#startBtn").on("click", function () {
 
-    // LIST ALL FILES YOU WANT TO PRELOAD
-    const assets = [
-        'assets/miku-hatsune.gif',
-        'assets/fall.png',
-        'assets/meeguh.gif',
-        'assets/cd.png',
-        'migu/001.png',
-        // add all song audio files
-        'songs/Be With Master.mp3',
-        'songs/Yogurt Stained on the Floor.mp3',
-        'songs/Look This Way, Baby.flac',
-        'songs/Love Song.flac',
-        'songs/Love Trial.flac',
-        'songs/Buoyant Colors.flac',
-        'songs/popipo.ogg',
-        'songs/Hello How are You.mp3',
-        'songs/Cat Food.mp3',
-        'songs/The Intense Voice Of Hatsune Miku.mp3',
-        'songs/magicalcureloveshot.mp3'
-    ];
+            const lines = $("#startTitle p");
 
-    let loadedCount = 0;
+            // p1 → fade up
+            $(lines[0]).css({
+                transform: "translateY(-120px)",
+                opacity: 0
+            });
 
-    function assetLoaded() {
-        loadedCount++;
-        if (loadedCount === assets.length) {
-            // All assets loaded
-            $loadingScreen.css('transition', 'opacity 0.5s').css('opacity', '0');
-            setTimeout(() => {
-                $loadingScreen.remove();
-                $('body').css('overflow', '');
-            }, 500);
-        }
-    }
+            // p2 → fade left
+            $(lines[1]).css({
+                transform: "translateX(-120px)",
+                opacity: 0
+            });
 
-    assets.forEach(src => {
-        const ext = src.split('.').pop().toLowerCase();
-        if (ext === 'mp3' || ext === 'flac' || ext === 'ogg') {
-            const audio = new Audio();
-            audio.src = src;
-            audio.onloadeddata = assetLoaded;
-            audio.onerror = assetLoaded; // in case file fails to load
-        } else {
-            const img = new Image();
-            img.src = src;
-            img.onload = assetLoaded;
-            img.onerror = assetLoaded;
-        }
-    });
-});
-</script>
+            // p3 → fade right
+            $(lines[2]).css({
+                transform: "translateX(120px)",
+                opacity: 0
+            });
+        });
 
+    </script>
 </body>
 
 </html>
