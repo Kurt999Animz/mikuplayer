@@ -199,28 +199,7 @@
 
 
         //extra
-        $("#startBtn").on("click", function () {
 
-            const lines = $("#startTitle p");
-
-            // p1 → fade up
-            $(lines[0]).css({
-                transform: "translateY(-120px)",
-                opacity: 0
-            });
-
-            // p2 → fade left
-            $(lines[1]).css({
-                transform: "translateX(-120px)",
-                opacity: 0
-            });
-
-            // p3 → fade right
-            $(lines[2]).css({
-                transform: "translateX(120px)",
-                opacity: 0
-            });
-        });
 document.addEventListener("DOMContentLoaded", () => {
     // --- Create loader ---
     const loader = document.createElement("div");
