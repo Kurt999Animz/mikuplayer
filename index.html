@@ -221,14 +221,10 @@
                 opacity: 0
             });
         });
-// Immediately create loader on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
-    // Create loader element
+    // --- Create loader ---
     const loader = document.createElement("div");
-    loader.id = "initialLoader";
     loader.textContent = "Loading Miku Player…";
-
-    // Apply styles purely via JS
     Object.assign(loader.style, {
         position: "fixed",
         top: "0",
@@ -247,18 +243,40 @@ document.addEventListener("DOMContentLoaded", () => {
         transition: "opacity 0.6s ease",
         pointerEvents: "none",
     });
-
     document.body.appendChild(loader);
 
-    // Wait for everything to load
-    window.addEventListener("load", () => {
+    // --- Collect all images and audios ---
+    const images = Array.from(document.images); // all <img> in DOM
+    const frames = ["migu/001.png","migu/002.png","migu/003.png","migu/004.png"];
+    frames.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        images.push(img);
+    });
+
+    const audios = Array.from(document.querySelectorAll("audio")).map(a => a.src);
+
+    // --- Promises for each image ---
+    const imagePromises = images.map(img => new Promise(resolve => {
+        if (img.complete && img.naturalHeight !== 0) resolve();
+        else img.onload = img.onerror = () => resolve();
+    }));
+
+    // --- Promises for each audio ---
+    const audioPromises = audios.map(src => new Promise(resolve => {
+        if(!src) resolve(); // skip empty sources
+        const audio = new Audio();
+        audio.src = src;
+        audio.preload = "auto";
+        audio.addEventListener("canplaythrough", resolve, {once:true});
+        audio.addEventListener("error", resolve, {once:true});
+    }));
+
+    // --- Wait for all ---
+    Promise.all([...imagePromises, ...audioPromises]).then(() => {
         // Fade out
         loader.style.opacity = "0";
-
-        // Remove from DOM after transition
-        setTimeout(() => {
-            loader.remove();
-        }, 600);
+        setTimeout(() => loader.remove(), 600);
     });
 });
 
