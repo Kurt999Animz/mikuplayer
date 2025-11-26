@@ -68,7 +68,7 @@ function playSongAtIndex(index) {
     $item.addClass('active');
     $item[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-    bpm = parseInt($item.data('bpm'));
+    bpm = parseInt($item.data('bpm')) || 180;
     beatInterval = 60000 / bpm;
     halfBeat = beatInterval / 2;
     doubleBeat = beatInterval * 2;
@@ -95,22 +95,37 @@ function playSongAtIndex(index) {
 $startBtn.on('click', function () {
     $(this).addClass("btn-exit");
     $startMenu.css('pointer-events', 'none');
-    $loadingScreen.css('animation-play-state', 'running');
-    $loadingFill.css('transition', `width ${loadingDuration / 1000}s linear`).css('width', '100%');
-    $('#fallingImg').css('animation-play-state', 'running');
 
-    // Play first song
-    playSongAtIndex(0);
+    const firstSong = $songItems.eq(0);
+    const audioEl = $song[0];
+    audioEl.src = firstSong.data('file');
+    audioEl.currentTime = 0;
 
-    // Hide loader after 16 beats
-    setTimeout(() => {
-        $footer.css('transform', 'translateY(0)');
-        $header.css('transform', 'translateY(0)');
-        $startMenu.css('opacity', 0);
-        $loadingScreen.css('opacity', 0);
-        $migu.addClass('show');
-        $songPanel.addClass('show');
-    }, loadingDuration);
+    // Show loading screen immediately
+    $loadingScreen.css('opacity', 1);
+    $loadingFill.css({ width: '0%', transition: 'none' });
+
+    // Wait for audio to load fully
+    audioEl.addEventListener('canplay', function onCanPlay() {
+        audioEl.removeEventListener('canplay', onCanPlay);
+
+        // Animate loading fill
+        $loadingFill.css('transition', `width ${loadingDuration / 1000}s linear`).css('width', '100%');
+        $('#fallingImg').css('animation-play-state', 'running');
+
+        // Play the first song and enable beat effects
+        playSongAtIndex(0);
+
+        // Hide loader after 16 beats
+        setTimeout(() => {
+            $footer.css('transform', 'translateY(0)');
+            $header.css('transform', 'translateY(0)');
+            $startMenu.css('opacity', 0);
+            $loadingScreen.css('opacity', 0);
+            $migu.addClass('show');
+            $songPanel.addClass('show');
+        }, loadingDuration);
+    });
 });
 
 // ====== CLICK SONG FROM LIST ======
