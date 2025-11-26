@@ -50,24 +50,47 @@ $songItems.eq(0).addClass("active");
 updateFooterInfo($songItems.eq(0));
 
 //start button
+// Start button
 $startBtn.on('click', function() {
-    $(this).addClass("btn-exit");
-    initiateSong(0);
+
+    // Initiate first song
+    const $firstItem = $songItems.eq(0);
+    $songItems.removeClass('active');
+    $firstItem.addClass('active');
+
+    const audioEl = $song[0];
+    audioEl.src = $firstItem.data('file');
+    audioEl.currentTime = 0;
+    
+
+    // Wait until audio is ready
+    audioEl.addEventListener("canplay", function onCanPlay() {
+        audioEl.removeEventListener("canplay", onCanPlay);
+
+
+            $(this).addClass("btn-exit");
     $startMenu.css('pointer-events', 'none');
     $loadingScreen.css('animation-play-state', 'running');
     $loadingFill.css('transition', `width ${loadingDuration / 1000}s linear`).css('width', '100%');
     $('#fallingImg').css('animation-play-state', 'running');
+        // Play audio
+        audioEl.play();
+        isPlaying = true;
+        updatePlayIcon();
 
-    setTimeout(() => {
-        $footer.css('transform', 'translateY(0)');
-        $header.css('transform', 'translateY(0)');
-        startBeatEffects();
-        $startMenu.css('opacity', 0);
-        $loadingScreen.css('opacity', 0);
-        $migu.addClass('show');
-        $songPanel.addClass('show');
-    }, loadingDuration);
+        // Start beat effects and reveal UI
+        setTimeout(() => {
+            $footer.css('transform', 'translateY(0)');
+            $header.css('transform', 'translateY(0)');
+            startBeatEffects();
+            $startMenu.css('opacity', 0);
+            $loadingScreen.css('opacity', 0);
+            $migu.addClass('show');
+            $songPanel.addClass('show');
+        }, loadingDuration); // optional delay for 16-beat animation
+    });
 });
+
 
 //i made this to initiate the first song and not have the bet effects until the  16th beat
 function initiateSong(index) {
@@ -86,10 +109,22 @@ function initiateSong(index) {
 
     updateFooterInfo($item);
 
-    $song.attr('src', $item.data('file'))[0].currentTime = 0;
-    $song[0].play();
-    isPlaying = true;
+    const audioEl = $song[0];
+    audioEl.src = $item.data('file');
+    audioEl.currentTime = 0;
+
+    // Wait until audio can play
+    audioEl.addEventListener("canplay", function onCanPlay() {
+        audioEl.removeEventListener("canplay", onCanPlay);
+
+        // Start playback and animations
+        audioEl.play();
+        isPlaying = true;
+        startBeatEffects();
+        updatePlayIcon();
+    });
 }
+
 
 //function to activate a song from the list
 function activateSong(index) {
@@ -112,6 +147,20 @@ function activateSong(index) {
 
     $song.attr('src', $item.data('file'))[0].currentTime = 0;
     playAudio();
+        const audioEl = $song[0];
+    audioEl.src = $item.data('file');
+    audioEl.currentTime = 0;
+
+    // Wait until audio can play
+    audioEl.addEventListener("canplay", function onCanPlay() {
+        audioEl.removeEventListener("canplay", onCanPlay);
+
+        // Start playback and animations
+        audioEl.play();
+        isPlaying = true;
+        startBeatEffects();
+        updatePlayIcon();
+    });
 }
 
 function updateFooterInfo($item) {
