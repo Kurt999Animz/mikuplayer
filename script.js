@@ -150,7 +150,7 @@ $startBtn.on('click', function () {
     // Wait for audio to load fully
     audioEl.addEventListener('canplay', function onCanPlay() {
         audioEl.removeEventListener('canplay', onCanPlay);
-        $(this).addClass("btn-exit");
+        $startBtn.addClass("btn-exit");
     $startMenu.css('pointer-events', 'none');
     $loadingScreen.css('animation-play-state', 'running');
 
