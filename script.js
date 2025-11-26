@@ -95,6 +95,47 @@ function playSongAtIndex(index) {
         isPlaying = true;
         updatePlayIcon();
         startBeatEffects();
+        
+    });
+}
+function initiateSong(index) {
+    if (index < 0 || index >= $songItems.length) index = 0;
+    currentIndex = index;
+
+    const $item = $songItems.eq(index);
+    frameIndex = 0;
+    $migu.attr('src', frames[0]);
+
+    // Stop any ongoing beat/frame animations immediately (like pause)
+    stopTimers();
+    isPlaying = false;
+    updatePlayIcon();
+    $bgContainer.css('opacity', '0.2');
+    $beatGradient.css({ 'opacity': 0, 'bottom': '-300px' });
+
+    $songItems.removeClass('active');
+    $item.addClass('active');
+    $item[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    bpm = parseInt($item.data('bpm')) || 180;
+    beatInterval = 60000 / bpm;
+    halfBeat = beatInterval / 2;
+    doubleBeat = beatInterval * 2;
+
+    updateFooterInfo($item);
+
+    const audioEl = $song[0];
+    audioEl.src = $item.data('file');
+    audioEl.currentTime = 0;
+
+    // Wait until audio is ready
+    audioEl.addEventListener('canplay', function onCanPlay() {
+        audioEl.removeEventListener('canplay', onCanPlay);
+
+        // Play audio
+        audioEl.play();
+        isPlaying = true;
+        updatePlayIcon();
     });
 }
 
@@ -110,19 +151,20 @@ $startBtn.on('click', function () {
     audioEl.addEventListener('canplay', function onCanPlay() {
         audioEl.removeEventListener('canplay', onCanPlay);
         $(this).addClass("btn-exit");
-        $startMenu.css('pointer-events', 'none');
-        $loadingScreen.css('opacity', 1);
-        $loadingFill.css({ width: '0%', transition: 'none' });
+    $startMenu.css('pointer-events', 'none');
+    $loadingScreen.css('animation-play-state', 'running');
+
 
         // Animate loading fill
         $loadingFill.css('transition', `width ${loadingDuration / 1000}s linear`).css('width', '100%');
         $('#fallingImg').css('animation-play-state', 'running');
 
         // Play the first song and enable beat effects
-        playSongAtIndex(0);
+        initiateSong(0);
 
         // Hide loader after 16 beats
         setTimeout(() => {
+            startBeatEffects();
             $footer.css('transform', 'translateY(0)');
             $header.css('transform', 'translateY(0)');
             $startMenu.css('opacity', 0);
